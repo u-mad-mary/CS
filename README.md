@@ -1,2 +1,1 @@
-# CS
-The repository for Criptography and Security laboratory works.
+# The repository for Criptography and Security laboratory works
