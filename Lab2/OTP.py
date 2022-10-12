@@ -26,28 +26,7 @@ class OTP:
         char = self.strxor(text, key)       
         return char 
     
-cipherOTP = OTP()
 
-def main():
-    
-    plainText = 'Cat is an animal'
-    
-    k = cipherOTP.setKey(plainText)
-    
-    em = cipherOTP.crypt(plainText, k)
-    dm   = cipherOTP.crypt(em, k)
-    
-    print('\t- OTP cipher -')
-    
-    print('Key: ', k)
-    print( "Plain text: " + plainText)
-
-    print('Encrypted text: ', em)
-    print('Decrypted text: ', dm)
-    
-    
-if __name__ == "__main__":
-    main()
 
 
 

@@ -240,14 +240,7 @@ def fill(array):  #the filling process
             
     return array
 
-def main():    
-    
-    print('\t- SM4 Block Cipher -')
-    
-    plainText = 'Cat is an animal'
-    key = 'abc'
-    
-    print('Key: ', key)
+def cypher(key, plainText):    
     
     key = bin(int(key,16))[2:]
     
@@ -267,21 +260,14 @@ def main():
     for char in group_en:
         encrypted  += encryption(char,key)
     
-    ciphered = hex(int(encrypted, 2))[2:]
+    em = hex(int(encrypted, 2))[2:]
     
     group_dec = group(encrypted)
-    
-    print( "Plain text: " + plainText)    
-    print('Cyphertext:\n' + ciphered)
-    
-    
+      
     for char in group_dec:
         decrypted  += decryption(char, key)
         
-    text = bit_to_char(decrypted)
+    dm = bit_to_char(decrypted)
         
-    print('Plaintext: \n' + text)
-
-if __name__ == '__main__':
-
-    main()
+    print('Encrypted text: ', em)
+    print('Decrypted text: ', dm)
