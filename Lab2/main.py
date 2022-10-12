@@ -26,7 +26,7 @@ def main():
         
     key = 'abc'   
     print('Key: ', key)
-    SM4.cypher(key, plainText)
+    cipherSM4.cypher(key, plainText)
     
     
     
