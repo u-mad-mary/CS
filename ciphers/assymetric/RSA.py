@@ -1,8 +1,5 @@
 import random 
 
-# Followed the algorithm from here:
-# https://sites.google.com/site/danzcosmos/the-rsa-algorithm
-
 class RSA:
     
     def check_prime(self, nr):
@@ -74,8 +71,8 @@ class RSA:
         
         # Formula used for encryption c ≡ m^e(mod n).
         for char in plainText:
-            c = ord(char)
-            cipherText.append(pow(c, e, n)) 
+            m = ord(char)
+            cipherText.append(pow(m, e, n)) 
         return cipherText 
 
     def decrypt(self, private_key, cipherText):
@@ -85,9 +82,9 @@ class RSA:
         plainText = ''
         
         # Formula used for decryption m ≡ c^d(mod n).
-        for nr in cipherText:
-            m = pow(nr, d, n)
-            plainText = plainText + str(chr(m))
+        for c in cipherText:
+            m = pow(c, d, n)
+            plainText += str(chr(m))
         return plainText
 
 

@@ -1,9 +1,9 @@
-from classical.Caesar import Caesar
-from classical.Playfair import Playfair
-from classical.Vigenere import Vigenere
-from classical.Affine import Affine
-from stream.OTP import OTP
-from block.SM4 import SM4
+from symmetric.classical.Caesar import Caesar
+from symmetric.classical.Playfair import Playfair
+from symmetric.classical.Vigenere import Vigenere
+from symmetric.classical.Affine import Affine
+from symmetric.stream.OTP import OTP
+from symmetric.block.SM4 import SM4
 from assymetric.RSA import RSA
 
 cipherCaesar = Caesar()
