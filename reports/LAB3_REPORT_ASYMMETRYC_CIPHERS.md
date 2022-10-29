@@ -1,18 +1,18 @@
 ﻿
-# Asymmetric Ciphers. RSA Cipher.
+# Asymmetric Ciphers. RSA Cipher
 
-### Course: Cryptography & Security
+## Course: Cryptography & Security
 
-### Author:  Maria-Mădălina Ungureanu
+## Author:  Maria-Mădălina Ungureanu
 
 ----
 
 ## Objectives
 
 1. Get familiar with the asymmetric cryptography mechanisms.
-    
-2.  Implement an example of an asymmetric cipher.
-    
+
+2. Implement an example of an asymmetric cipher.
+
 ## Implementation description
 
 The cipher was implemented in Python programming language, it can be found in *\ciphers\assymetric* directory. In order to run the code access main.py file from *\ciphers*, it will execute all implemented ciphers and output RSA results at the end.
@@ -21,7 +21,8 @@ The cipher was implemented in Python programming language, it can be found in *\
 
 In Asymmetric Encryption algorithms, you use two different keys, one for encryption and the other for decryption. The key used for encryption is the public key, and the key used for decryption is the private key.
 
-RSA cipher is one of numerous asymmetric encryption algorithms. It consists of three steps: 
+RSA cipher is one of numerous asymmetric encryption algorithms. It consists of three steps:
+
 1. Key generation;
 2. Encryption;
 3. Decryption.
@@ -29,7 +30,8 @@ RSA cipher is one of numerous asymmetric encryption algorithms. It consists of t
 The key generation process starts with choosing two distinct large prime numbers $p$ and $q$, using the method large_prime(). Then computing $n$ as the product of $p$ and $q$, it will be used as the modulus for public and private keys.
 
 Compute the totient of $n$, $\Phi(n)$, using the formula:
-[$$ \Phi(n)=(p-1)(q-1)$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)   
+
+[$$\displaystyle \Phi(n)=(p-1)(q-1)$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)
 
 After this is selected $e$ such that 1 < $e$ < $\Phi(n)$, sharing no divisors other than 1.
 
@@ -56,29 +58,35 @@ The implementation of generating the RSA keys can be analysed below.
         private_key = (d, n) 
 ```
 
-The second step is encryption. Here, the message is ciphered using the following formula: [$$c \equiv {m^e (\bmod(n))}$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)
+The second step is encryption. Here, the message is ciphered using the following formula:
+
+[$$\displaystyle c \equiv {m^e (\bmod(n))}$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)
 
 The formula is implemented using the pow() function that returns $m$ to the power of $e$, modulus $n$.
+
 ```python
         for char in plainText:
             m = ord(char)
             cipherText.append(pow(m, e, n)) 
         return cipherText 
 ```
+
 The cipher text is stored as a list of encrypted characters (integers).
 
 For performing the third step, decryption, is also used pow() function mentioned above, the only difference is the used parameters as in the formula:
-[$$m \equiv {c^d (\bmod(n))}$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)
+
+[$$\displaystyle m \equiv {c^d (\bmod(n))}$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)
 
 The implementation can be seen below.
+
 ```python
         for c in cipherText:
             m = pow(c, d, n)
             plainText += str(chr(m))
         return plainText
 ```
-Each element of the cipher text list is decrypted, merged and returned as a string.
 
+Each element of the cipher text list is decrypted, merged and returned as a string.
 
 ## Results
 
@@ -86,8 +94,7 @@ The plain text is the same as in the previous laboratory works: “Cat is an ani
 
 The result of the RSA cipher  is showed below:
 
-```         
-        - RSA Assymetrical Cipher -
+```        - RSA Assymetrical Cipher -
 Public key: (78293, 113263)
 Private key: (63197, 113263)
 Encrypted text:  [73354, 59990, 56451, 625, 17414, 95513, 625, 59990, 18493, 625, 59990, 18493, 17414, 15902, 59990, 52170]
