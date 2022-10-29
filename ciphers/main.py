@@ -2,20 +2,22 @@ from classical.Caesar import Caesar
 from classical.Playfair import Playfair
 from classical.Vigenere import Vigenere
 from classical.Affine import Affine
-from stream.OTP import *
-import block.SM4
+from stream.OTP import OTP
+from block.SM4 import SM4
+from assymetric.RSA import RSA
 
 cipherCaesar = Caesar()
 cipherPlayfair = Playfair()
 cipherViegenere = Vigenere()
 cipherAffine = Affine()
 cipherOTP = OTP()
-cipherSM4 = block.SM4
+cipherSM4 = SM4()
+cipherRSA = RSA()
 
 
 def encr_decr(em, dm):
-    print('Encrypted text: ', em)
-    print('Decrypted text: ', dm)
+    print('Encrypted text: ', str(em))
+    print('Decrypted text: ', str(dm))
 
 def main():
     
@@ -89,6 +91,20 @@ def main():
 
     cipherSM4.cypher(k6, plainText)
     
+    
+    
+    ### Set keys for RSA Assymetrical Cipher ###
+    private_key, public_key = cipherRSA.rsa_keys()
+    print('\n\t- RSA Assymetrical Cipher -')
+        
+    print('Public key: ' + str(public_key))
+    print('Private key: ' + str(private_key))
+    
+    em = cipherRSA.encrypt(public_key, plainText)
+    dm = cipherRSA.decrypt(private_key, em)
+    
+    encr_decr(em,dm)
+
 if __name__ == "__main__":
     main()
 
