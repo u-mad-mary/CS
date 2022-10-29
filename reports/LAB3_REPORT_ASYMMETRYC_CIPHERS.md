@@ -15,11 +15,11 @@
     
 ## Implementation description
 
-The cipher was implemented in Python programming language, it can be found in *\ciphers\assymetric* directory. In order to run the code, access main.py file from *\ciphers*, it will execute all implemented ciphers and output RSA results at the end.
+The cipher was implemented in Python programming language, it can be found in *\ciphers\assymetric* directory. In order to run the code access main.py file from *\ciphers*, it will execute all implemented ciphers and output RSA results at the end.
 
 ### RSA(**Rivest–Shamir–Adleman**)
 
-In Asymmetric Encryption algorithms, are used two different keys, one for encryption and the other for decryption. The key used for encryption is the public key, and the key used for decryption is the private key.
+In Asymmetric Encryption algorithms, you use two different keys, one for encryption and the other for decryption. The key used for encryption is the public key, and the key used for decryption is the private key.
 
 RSA cipher is one of numerous asymmetric encryption algorithms. It consists of three steps: 
 1. Key generation;
