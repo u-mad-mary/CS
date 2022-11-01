@@ -41,6 +41,7 @@ Then computing $n$ as the product of $p$ and $q$, it will be used as the modulus
 Compute the totient of $n$, $\Phi(n)$, using the formula:
 
 [$$ \Phi(n)=(p-1)(q-1)$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)  
+
 It is written in the program like shown below:
 ```python      
         phi = (p-1)*(q-1)
