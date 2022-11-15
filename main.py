@@ -1,10 +1,13 @@
-from symmetric.classical.Caesar import Caesar
-from symmetric.classical.Playfair import Playfair
-from symmetric.classical.Vigenere import Vigenere
-from symmetric.classical.Affine import Affine
-from symmetric.stream.OTP import OTP
-from symmetric.block.SM4 import SM4
-from assymetric.RSA import RSA
+from ciphers.symmetric.classical.Caesar import Caesar
+from ciphers.symmetric.classical.Playfair import Playfair
+from ciphers.symmetric.classical.Vigenere import Vigenere
+from ciphers.symmetric.classical.Affine import Affine
+from ciphers.symmetric.stream.OTP import OTP
+from ciphers.symmetric.block.SM4 import SM4
+from ciphers.asymmetric.RSA import RSA
+from hash.Hash import Hash
+from hash.PassStore import PassStore
+
 
 cipherCaesar = Caesar()
 cipherPlayfair = Playfair()
@@ -13,7 +16,8 @@ cipherAffine = Affine()
 cipherOTP = OTP()
 cipherSM4 = SM4()
 cipherRSA = RSA()
-
+hash = Hash()
+storePass = PassStore()
 
 def encr_decr(em, dm):
     print('Encrypted text: ', str(em))
@@ -23,6 +27,8 @@ def main():
     
     plainText = 'Cat is an animal'
     print('\tText: ' + plainText)
+    
+    
     
     ### Set key for Caesar Classical Cipher ###
     k1 = 3
@@ -35,6 +41,7 @@ def main():
     dm = cipherCaesar.decrypt(em)
     
     encr_decr(em,dm)
+    
     
     
     ### Set key for Playfair Classical Cipher ###
@@ -52,6 +59,8 @@ def main():
     
     encr_decr(em,dm)    
     
+    
+    
     ### Set key for Viegenere Classical Cipher ###
     k3 = 'CAT'
     
@@ -62,6 +71,8 @@ def main():
     
     encr_decr(em,dm)
     
+    
+    
     ### Set key for Affine Classical Cipher ###
     k4 = [3,3]
     
@@ -70,6 +81,8 @@ def main():
     dm = cipherAffine.decrypt(em, k4)
     
     encr_decr(em,dm)
+    
+    
 
     ### Set key for OTP Stream Cipher ###
     k5 = cipherOTP.setKey(plainText)
@@ -82,6 +95,8 @@ def main():
     print('Key: ', k5)
 
     encr_decr(em,dm)
+    
+    
     
     ### Set key for SM4 Block Cipher ###
     k6 = 'abc' 
@@ -104,6 +119,42 @@ def main():
     dm = cipherRSA.decrypt(private_key, em)
     
     encr_decr(em,dm)
+    
+    
+    ### RSA & SHA256 ###
+    print('\n\t- RSA & SHA256 -')
+    hashed = hash.hashFun(plainText)
+    
+    print('Hashed Message: ')
+    print(hashed)
+    
+    encr = cipherRSA.encrypt(public_key, hashed)
+    print('\nEncrypted message: ')
+    print(encr)
+    
+    decr = cipherRSA.decrypt(private_key, encr)
+    print('\nDecrypted message: ')
+    print(decr)
+    
+    #verify
+    print('\nDigital signature check: ')
+    hash.verify(decr, hashed)  
+    
+    #### Store password in database ####
+    
+    print('\n\t- Store hashed password in database -')
+       
+    mess = input('Enter password: ')
+    
+    hashPass = hash.hashFun(mess)
+    
+    storePass.create_table()
+    storePass.data_entry(hashPass)
+    
+    storePass.show_data()
+    storePass.close_con()
+    
+    
 
 if __name__ == "__main__":
     main()

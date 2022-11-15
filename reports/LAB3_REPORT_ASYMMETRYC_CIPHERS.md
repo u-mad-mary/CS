@@ -1,4 +1,5 @@
 ﻿
+﻿
 # Asymmetric Ciphers. RSA Cipher.
 
 ### Course: Cryptography & Security
@@ -26,33 +27,39 @@ RSA cipher is one of numerous asymmetric encryption algorithms. It consists of t
 2. Encryption;
 3. Decryption.
 
-The key generation process starts with choosing two distinct large prime numbers $p$ and $q$, using the method large_prime(). Then computing $n$ as the product of $p$ and $q$, it will be used as the modulus for public and private keys.
-
-Compute the totient of $n$, $\Phi(n)$, using the formula:
-
-[$$ \Phi(n)=(p-1)(q-1)$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)   
-
-After this is selected $e$ such that 1 < $e$ < $\Phi(n)$, sharing no divisors other than 1.
-
-Next determine $d$ using modular inverse function.
-
-The public key has the modulus $n$ and the public (or encryption) exponent $e$. The private key has the modulus $n$ and the private (or decryption) exponent $d$, which is kept in secret.
-
-The implementation of generating the RSA keys can be analysed below.
-
+The key generation process starts with choosing two distinct large prime numbers $p$ and $q$, using the method large_prime():
 ```python
         p = self.large_prime()
         q = self.large_prime()
-        
+ ```
+ 
+Then computing $n$ as the product of $p$ and $q$, it will be used as the modulus for public and private keys:
+```python      
         n = p * q
+```
+
+Compute the totient of $n$, $\Phi(n)$, using the formula:
+
+[$$ \Phi(n)=(p-1)(q-1)$$](https://sites.google.com/site/danzcosmos/the-rsa-algorithm)  
+
+It is written in the program like shown below:
+```python      
         phi = (p-1)*(q-1)
-        
+ ```
+
+After this is selected $e$ such that 1 < $e$ < $\Phi(n)$, sharing no divisors other than 1:
+```python      
         e = random.randrange(1, phi)     
         while self.gcd(e, phi) != 1:
             e = random.randrange(1, phi)
+ ```
 
+Next determine $d$ using modular inverse function:
+```python      
         d = self.inv_mod(e, phi)
-
+```
+The public key has the modulus $n$ and the public (or encryption) exponent $e$. The private key has the modulus $n$ and the private (or decryption) exponent $d$, which is kept in secret:
+```python      
         public_key = (e, n)
         private_key = (d, n) 
 ```

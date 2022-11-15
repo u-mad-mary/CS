@@ -1,4 +1,4 @@
-import random 
+import random
 
 class RSA:
     
@@ -64,27 +64,18 @@ class RSA:
         return private_key, public_key
 
     def encrypt(self, public_key, plainText):
-        
+
         e, n = public_key
 
-        cipherText = []
-        
-        # Formula used for encryption c ≡ m^e(mod n).
-        for char in plainText:
-            m = ord(char)
-            cipherText.append(pow(m, e, n)) 
-        return cipherText 
+        return [pow(ord(char),e,n) for char in plainText]
+
 
     def decrypt(self, private_key, cipherText):
-   
+
         d, n = private_key
+       
+        return ''.join([chr(pow(char, d, n)) for char in cipherText])   
+    
         
-        plainText = ''
-        
-        # Formula used for decryption m ≡ c^d(mod n).
-        for c in cipherText:
-            m = pow(c, d, n)
-            plainText += str(chr(m))
-        return plainText
-
-
+    
+    

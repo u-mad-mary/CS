@@ -57,3 +57,6 @@ class Vigenere:
 
         return chr(c) #for returning the letter
 
+
+
+
