@@ -148,7 +148,7 @@ def main():
     
     hashPass = hash.hashFun(mess)
     
-    storePass.create_table()
+    #storePass.create_table()
     storePass.data_entry(hashPass)
     
     storePass.show_data()
