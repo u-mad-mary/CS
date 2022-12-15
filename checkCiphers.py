@@ -6,7 +6,7 @@ from ciphers.symmetric.stream.OTP import OTP
 from ciphers.symmetric.block.SM4 import SM4
 from ciphers.asymmetric.RSA import RSA
 from hash.Hash import Hash
-from hash.PassStore import PassStore
+from hash.Storage import Storage
 
 
 cipherCaesar = Caesar()
@@ -17,7 +17,7 @@ cipherOTP = OTP()
 cipherSM4 = SM4()
 cipherRSA = RSA()
 hash = Hash()
-storePass = PassStore()
+storePass = Storage()
 
 def encr_decr(em, dm):
     print('Encrypted text: ', str(em))
@@ -27,7 +27,6 @@ def main():
     
     plainText = 'Cat is an animal'
     print('\tText: ' + plainText)
-    
     
     
     ### Set key for Caesar Classical Cipher ###
@@ -75,10 +74,10 @@ def main():
     
     ### Set key for Affine Classical Cipher ###
     k4 = [3,3]
-    
+    cipherAffine.setKey(k4)
     print('\n\t- Affine Classical Cipher -')
-    em = cipherAffine.encrypt("Cat is an animal", k4)
-    dm = cipherAffine.decrypt(em, k4)
+    em = cipherAffine.encrypt("Cat is an animal")
+    dm = cipherAffine.decrypt(em)
     
     encr_decr(em,dm)
     
@@ -123,8 +122,11 @@ def main():
     
     ### RSA & SHA256 ###
     print('\n\t- RSA & SHA256 -')
-    hashed = hash.hashFun(plainText)
-    
+    text = 'abc'
+    hashed = hash.hashFun(text)
+    hashed1 = hash.hashFun(text)
+    print(hashed)
+    print(hashed1)
     print('Hashed Message: ')
     print(hashed)
     
@@ -143,14 +145,14 @@ def main():
     #### Store password in database ####
     
     print('\n\t- Store hashed password in database -')
-       
+    
+    login = input('Enter login: ')   
     mess = input('Enter password: ')
     
-    hashPass = hash.hashFun(mess)
+    storePass.create_table()
+    storePass.data_entry(login, mess)
     
-    #storePass.create_table()
-    storePass.data_entry(hashPass)
-    
+    storePass.data_extraction(login)
     storePass.show_data()
     storePass.close_con()
     

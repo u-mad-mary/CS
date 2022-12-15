@@ -25,4 +25,3 @@ class PassStore():
     def close_con(self):
         self.c.close()
         self.conn.close()  
-    

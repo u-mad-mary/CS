@@ -1,7 +1,5 @@
-class Caesar():
+class Caesar:
     
-    def __int__(self):
-        self.key = None
         
     def setKey(self, key):
         self.key = key
@@ -9,7 +7,7 @@ class Caesar():
         if self.key < 0 or self.key > 26:
             raise Exception("\nError: The key must be a positive integer.")
          
-    def crypt(self, char, state):
+    def crypt(self, char,  state):
         
         if char.isalpha():
            first_char = ord('a' if char.islower() else 'A')     
@@ -22,6 +20,7 @@ class Caesar():
            return chr(new_char_pos + first_char)
        
         return char  
+    
      
     def encrypt(self, plainText):
         cipherText = ''

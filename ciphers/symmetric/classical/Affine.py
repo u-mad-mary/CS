@@ -1,21 +1,21 @@
 class Affine:
     
     def __init__(self):
-        self.key = None
+        self.key = []
         
-    def setKeys(self, key):
+    def setKey(self, key):
         self.key = key
-        key = []
+
     
-    def encrypt(self, plainText, key):
+    def encrypt(self, plainText):
         plainText = plainText.replace(" ", "")
                
-        em = [chr((( key[0] * (ord(i) - ord('A')) + key[1] ) % 26) + ord('A'))for i in plainText.upper()]
+        em = [chr((( self.key[0] * (ord(i) - ord('A')) + self.key[1] ) % 26) + ord('A'))for i in plainText.upper()]
         return ''.join(em) 
 
-    def decrypt(self, cipherText,key):
+    def decrypt(self, cipherText):
         cipherText = cipherText.replace(" ", "")
-        dm = [chr((( self.inv_mod (key[0] , 26) * (ord(c) - ord('A') - key[1])) % 26) + ord('A')) for c in cipherText]
+        dm = [chr((( self.inv_mod (self.key[0] , 26) * (ord(c) - ord('A') - self.key[1])) % 26) + ord('A')) for c in cipherText]
         return ''.join(dm)
 
     #function for finding the multiplicative inverse of 'a'  of modulo 'm' 
