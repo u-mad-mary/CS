@@ -80,7 +80,7 @@ def sign_in():
 def otp(email):
     
     secret_key = pyotp.random_base32()
-    totp = pyotp.TOTP(secret_key)
+    totp = pyotp.TOTP(secret_key, interval=200)
     code = totp.now()
     
     print(f"The OPT is {code}")
@@ -127,7 +127,7 @@ def sign_in_otp(email):
     data = request.json
     otp_data = data['otp']
     
-    if pyotp.TOTP(secret_key).verify(otp_data):
+    if pyotp.TOTP(secret_key, interval=200).verify(otp_data):
         
         users[email]['otp_auth']['verify'] = True
         return jsonify(f'You signed in!')
