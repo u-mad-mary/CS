@@ -207,7 +207,7 @@ When user signs in with Multi Factor Authentication she provides the same data a
 
 ```text
 The OPT is 755154
-``
+```
 Which must be introduced through the "/otp_signin/<email>" path as:
 ```json
 {
@@ -260,5 +260,5 @@ With the same approach can be executed all classical ciphers implemented in the 
 
 ## Conclusion
 
-This laboratory work was useful, because it got me more familiar with important security mechanisms such as MFA, authentication and authorization, also it motivated me to review my previous laboratory works to suit them to new requirements.
+This laboratory work was useful, because it got me more familiar with important security mechanisms such as MFA, authentication and authorization, also it motivated me to review my previous laboratory works to suit them to the new requirements.
 
