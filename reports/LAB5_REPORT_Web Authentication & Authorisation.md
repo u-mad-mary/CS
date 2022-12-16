@@ -212,6 +212,7 @@ Which must be introduced through the "/otp_signin/<email>" path as:
 ```json
 {
 "otp": 755154
+}
 ```
 And it will display:
 
