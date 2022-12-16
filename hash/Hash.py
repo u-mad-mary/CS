@@ -8,7 +8,9 @@ class Hash:
         return hashed_password
     
     def verify(self, input_password, hashed_password):
+        
         current_password = sha256(input_password.encode("UTF-8")).hexdigest()
+        
         if current_password == hashed_password:
             # print(current_password, " = ", hashed_password)
             # print("\nVerification successful! ")

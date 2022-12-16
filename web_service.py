@@ -1,23 +1,25 @@
+
+#it's almost a christmas tree
+import sys
+import pyotp
+import requests
 import threading
-
+from hash.Hash import Hash
+from base64 import b64encode
+from flask_httpauth import HTTPBasicAuth
 from flask import Flask, jsonify, request
-
 from ciphers.symmetric.classical.Affine import Affine
 from ciphers.symmetric.classical.Caesar import Caesar
 from ciphers.symmetric.classical.Playfair import Playfair
 from ciphers.symmetric.classical.Vigenere import Vigenere
-from hash.Hash import Hash
 
-import requests
-from flask_httpauth import HTTPBasicAuth
-from base64 import b64encode
-import pyotp
 
+
+hash = Hash()
 cipherCaesar = Caesar()
 cipherPlayfair = Playfair()
 cipherViegenere = Vigenere()
 cipherAffine = Affine()
-hash = Hash()
 
 
 app = Flask(__name__)
@@ -27,10 +29,10 @@ auth = HTTPBasicAuth()
 users = {}
            
 @auth.verify_password
-def verify_password(username, password):
-    
-    if username in users and hash.verify(password, users.get(username)['password']):
-        return username
+def verify_password(email, password):
+
+    if email in users and hash.verify(password, users.get(email)['password']):
+        return email
     
 @app.route('/signup', methods=['POST'])
 def sign_up():
@@ -38,20 +40,21 @@ def sign_up():
     user_data = request.json
     
     try:
-        username = user_data['username']
+        
+        email = user_data['email']
         password = user_data['password']
         user_access = user_data['access']
         
-        if not (username in users):
+        if not (email in users):
             
             hashed_password = hash.hashFun(password)
-            users[username] = {'password': hashed_password, 'access': user_access}
-            
+            users[email] = {'password': hashed_password, 'access': user_access}
+          
             return f'Registration is completed successfully!'
         
         else:
             
-            return f'Choose another username.'
+            return f'Choose another email.'
         
     except:
         
@@ -61,22 +64,23 @@ def sign_up():
 auth_headers = {}    
 @app.route('/signin', methods=['GET', 'POST'])
 def sign_in():
+    
     if request.method == 'GET' or request.method == 'POST':
         user_info = request.json
         
-        username = user_info['username']
+        email = user_info['email']
         password = user_info['password']
         
-        token =  b64encode(f"{username}:{password}".encode('utf-8')).decode("ascii")
+        token =  b64encode(f"{email}:{password}".encode('utf-8')).decode("ascii")
         
         auth_headers['Authorization'] = token
         
-        if username in users:
-               return jsonify({username: token})
+        if email in users:
+               return jsonify({email: token})
         else:
-            return jsonify(f'Wrong data inputed.')
+            return jsonify(f'Wrong email inputed.')
         
-def otp(username):
+def otp(email):
     
     secret_key = pyotp.random_base32()
     totp = pyotp.TOTP(secret_key)
@@ -84,7 +88,7 @@ def otp(username):
     
     print(f"The OPT is {code}")
     
-    users[username]['otp_auth'] = {'secret': secret_key, 'validation': None}
+    users[email]['otp_auth'] = {'secret': secret_key, 'validation': None}
     return secret_key
         
 url = 'http://localhost:8000'
@@ -93,21 +97,21 @@ def sign_in_mfa():
     
     user_info = request.json
     
-    username = user_info["username"]
+    email = user_info["email"]
     password = user_info["password"]
     
-    auth_token = requests.get(f'{url}/signin', json={'username': username, 'password': password}).json()
+    auth_token = requests.get(f'{url}/signin', json={'email': email, 'password': password}).json()
    
-    if auth_token[username]:
-        user = users[username]
+    if auth_token[email]:
+        user = users[email]
         
-        otp(username)
+        otp(email)
         
-        while not ('otp_auth' in users[username]) or user['otp_auth']['validation'] is None:
+        while not ('otp_auth' in users[email]) or user['otp_auth']['validation'] is None:
             pass
         
         if user['otp_auth']['validation']:
-            return jsonify({username: auth_token[username]})
+            return jsonify({email: auth_token[email]})
         else:
             return jsonify(f'Logging attempt failed')
         
@@ -116,20 +120,21 @@ def sign_in_mfa():
         return jsonify(f'Invalid data provided')
 
 
-@app.route('/otp_signin/<username>', methods=['POST'])
-def sign_in_otp(username):
+@app.route('/otp_signin/<email>', methods=['POST'])
+def sign_in_otp(email):
     
-    secret_key = users[username]['otp_auth']['secret']
+    secret_key = users[email]['otp_auth']['secret']
     data = request.json
     otp_data = data['otp']
     
     if pyotp.TOTP(secret_key).verify(otp_data):
         
-        users[username]['otp_auth']['validation'] = True
+        users[email]['otp_auth']['validation'] = True
         return jsonify(f'Logged in successfully')
+    
     else:
         
-        users[username]['otp_auth']['validation'] = False
+        users[email]['otp_auth']['validation'] = False
         return jsonify(f'Invalid data provided')
     
     
@@ -138,6 +143,7 @@ user_access= {"none": {"available_resources":[]},
 
 
 def cipher_mode(mode, cipher, key, text):
+    
     if mode == 'Encryption':
         
         current_cipher = cipher()
@@ -158,16 +164,20 @@ def get_ciphers():
     if request.method == 'GET':
         
         if users[auth.current_user()]['access'] in user_access:
-            return jsonify(f'Available ciphers: {user_access[users[auth.current_user()]["access"]]["available_resources"]}')
+            return jsonify(f'You have access to the following ciphers: {user_access[users[auth.current_user()]["access"]]["available_resources"]}')
        
         else:
             
-            return jsonify({'Available ciphers': None})
+            return jsonify({'You have access to the following ciphers': None})
+        
 
-@app.route('/ciphers/Caesar', methods=['POST'])
+def get_class(cipher_name):
+    return getattr(sys.modules[__name__], cipher_name)
+
+@app.route('/ciphers/<cipher>', methods=['POST'])
 @auth.login_required
-def do_caesar():
-    if "Caesar" in user_access[users[auth.current_user()]['access']]["available_resources"]:
+def do_caesar(cipher):
+    if cipher in user_access[users[auth.current_user()]['access']]["available_resources"]:
         
         choice = request.json
         
@@ -175,65 +185,12 @@ def do_caesar():
         key = choice["key"]
         text = choice["text"]
         
-        return cipher_mode(mode, Caesar, key, text)
+        return cipher_mode(mode, get_class(cipher), key, text)
     
     else:
         
         return jsonify(f'Access Denied!')
 
-
-@app.route('/ciphers/Affine', methods=['POST'])
-@auth.login_required
-def do_affine():
-    if "Affine" in user_access[users[auth.current_user()]['access']]["available_resources"]:
-        
-        choice = request.json
-        
-        mode = choice["mode"]
-        key = choice["key"]
-        text = choice["text"]
-        
-        return cipher_mode(mode, Affine, key, text)
-    
-    else:
-        
-        return jsonify(f'Access Denied!')
-
-
-@app.route('/ciphers/Vigenere', methods=['POST'])
-@auth.login_required
-def do_vigenere():
-    if "Vigenere" in user_access[users[auth.current_user()]['access']]["available_resources"]:
-        
-        choice = request.json
-        
-        mode = choice["mode"]
-        key = choice["key"]
-        text = choice["text"]
-        
-        return cipher_mode(mode, Vigenere, key , text)
-    
-    else:
-        
-        return jsonify(f'Access Denied!')
-
-
-@app.route('/ciphers/Playfair', methods=['POST'])
-@auth.login_required
-def do_playfair():
-    if "Playfair" in user_access[users[auth.current_user()]['access']]["available_resources"]:
-        
-        choice = request.json
-        mode = choice["mode"]
-        key = choice["key"]
-        text = choice["text"]
-        
-        return cipher_mode(mode, Playfair, key, text)
-    
-    else:
-        
-        return jsonify(f'Access Denied!')
-    
 
 
 if __name__ == "__main__":
