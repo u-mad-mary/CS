@@ -133,7 +133,7 @@ if users[auth.current_user()]['access'] in user_access:
         return jsonify({'Unauthorized access'})
 ```
 
-To choose a particular mode (Encryption or Decryption) is implemented an if statement:
+To choose a particular mode (Encryption or Decryption) is implemented in an if statement:
 
 ```python
     if mode == 'Encryption':        
@@ -149,7 +149,7 @@ To choose a particular mode (Encryption or Decryption) is implemented an if stat
 
 So, when the user wants to perform a particular operation he should specify it and the function will call the class, setting the key and performing the desired operation.
 
-For executing, a particular cipher the users makes a choice, putting as endpoint “/ciphers/theDesiredCipherName” and sending the post request with the mode, key, and text for performing the chosen cipher.
+For executing, a particular cipher the users makes a choice, putting as path “/ciphers/theDesiredCipherName” and sending the post request with the mode, key, and text for performing the chosen cipher.
 
 ```python
 app.route("/ciphers/<cipher>", methods=["POST"])
@@ -168,6 +168,97 @@ def do_cipher(cipher):
 
 ```
 
+The get_class(cipher) function turns the given “cipher” in the path into a class, making it possible to execute all ciphers without writing a function for each of them.
+
 ## Results
 
-TO BE CONTINUED
+All the requests were sent through Postman with a json body.
+
+In the process of registration is sent a POST request to 'signup' path, where user enters her email, password and obtains access to the classical ciphers:
+
+```json
+{
+"email":  "lolla@gmail.com",
+"password":  "mamma",
+"access":  "classical"
+}
+```
+The following response will pop out:
+```text
+Registration is completed successfully!
+```
+
+The sign in process is similar, the only difference being another path "/signin" and the absence of "access" field.
+
+```json
+{
+"email":  "lolla@gmail.com",
+"password":  "mamma"
+}
+```
+
+The result of this POST request will be the user token:
+
+```
+"lolla@gmail.com":  "cEBnbWFpbC5jb206bWFtbWE="
+```
+
+When user signs in with Multi Factor Authentication she provides the same data as in the previous request and gets the same token, but on "/mfa" path, also in terminal can be seen the OPT:
+
+```text
+The OPT is 755154
+``
+Which must be introduced through the "/otp_signin/<email>" path as:
+```json
+{
+"otp": 755154
+```
+And it will display:
+
+```txt
+You signed in!
+```
+Otherwise, an error message "Wrong input." will pop up.
+
+Lolla, the user with access to the classical ciphers can view all the available ones through '/ciphers' path with a GET request, the following response will be displayed:
+
+```text
+"You have access to the following ciphers: ['Caesar', 'Vigenere', 'Playfair', 'Affine']"
+```
+To perform one of the available ciphers the user must specify the path 'ciphers/chipher' where "chipher" is the name of the chosen one, sending a POST request with the following body:
+
+```json
+{
+"mode":  "Encryption",
+"key":  3,
+"text":  "Cat is an animal"
+}
+```
+
+Where "mode" can be "Encryption" or "Decryption", "key" represents the key for the cipher and the "text" is the inputted text. After the sending the request the user will get:
+
+```text
+"crypted":  "Fdw lv dq dqlpdo"
+```
+
+In the next case the user will send the request through '/chiphers/Playfair' path with the following body:
+
+```json
+{
+"mode":  "Decryption",
+"key":  "a",
+"text":  "dbyoqclcohlbnv"
+}
+```
+Getting the following response:
+```text
+"crypted": "catisananimalx"
+```
+
+With the same approach can be executed all classical ciphers implemented in the first laboratory work.
+
+
+## Conclusion
+
+This laboratory work was useful, because it got me more familiar with important security mechanisms such as MFA, authentication and authorization, also it motivated me to review my previous laboratory works to suit them to new requirements.
+
