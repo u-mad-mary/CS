@@ -61,7 +61,6 @@ def sign_up():
         return f'Registration failed due to the wrong input.'
         
         
-auth_headers = {}    
 @app.route('/signin', methods=['GET', 'POST'])
 def sign_in():
     
@@ -72,9 +71,7 @@ def sign_in():
         password = user_info['password']
         
         token =  b64encode(f"{email}:{password}".encode('utf-8')).decode("ascii")
-        
-        auth_headers['Authorization'] = token
-        
+               
         if email in users:
                return jsonify({email: token})
         else:
@@ -88,10 +85,10 @@ def otp(email):
     
     print(f"The OPT is {code}")
     
-    users[email]['otp_auth'] = {'secret': secret_key, 'validation': None}
+    users[email]['otp_auth'] = {'secret': secret_key, 'verify': None}
     return secret_key
         
-url = 'http://localhost:8000'
+#url = 'http://localhost:8000'
 @app.route('/mfa', methods=['POST'])
 def sign_in_mfa():
     
@@ -100,24 +97,27 @@ def sign_in_mfa():
     email = user_info["email"]
     password = user_info["password"]
     
-    auth_token = requests.get(f'{url}/signin', json={'email': email, 'password': password}).json()
+    auth_token = requests.get(f'http://localhost:8000/signin', json={'email': email, 'password': password}).json()
+    
    
     if auth_token[email]:
         user = users[email]
         
         otp(email)
         
-        while not ('otp_auth' in users[email]) or user['otp_auth']['validation'] is None:
+        while not ('otp_auth' in users[email]) or user['otp_auth']['verify'] is None:
             pass
         
-        if user['otp_auth']['validation']:
+        if user['otp_auth']['verify']:
+            
             return jsonify({email: auth_token[email]})
+        
         else:
-            return jsonify(f'Logging attempt failed')
+            return jsonify(f'Something went wrong.')
         
     else:
         
-        return jsonify(f'Invalid data provided')
+        return jsonify(f'Wrong input.')
 
 
 @app.route('/otp_signin/<email>', methods=['POST'])
@@ -129,17 +129,16 @@ def sign_in_otp(email):
     
     if pyotp.TOTP(secret_key).verify(otp_data):
         
-        users[email]['otp_auth']['validation'] = True
-        return jsonify(f'Logged in successfully')
+        users[email]['otp_auth']['verify'] = True
+        return jsonify(f'You signed in!')
     
     else:
         
-        users[email]['otp_auth']['validation'] = False
-        return jsonify(f'Invalid data provided')
+        users[email]['otp_auth']['verify'] = False
+        return jsonify(f'Wrong input.')
     
     
-user_access= {"none": {"available_resources":[]},
-           "classical":{"available_resources":["Caesar", "Vigenere", "Playfair", "Affine"]}}
+user_access= {"none": [],"classical":["Caesar", "Vigenere", "Playfair", "Affine"]}
 
 
 def cipher_mode(mode, cipher, key, text):
@@ -158,17 +157,16 @@ def cipher_mode(mode, cipher, key, text):
         
     return jsonify({'crypted': crypted})
 
-@app.route('/ciphers', methods=['GET', 'POST'])
+@app.route('/ciphers', methods=['GET'])
 @auth.login_required
 def get_ciphers():
-    if request.method == 'GET':
-        
-        if users[auth.current_user()]['access'] in user_access:
-            return jsonify(f'You have access to the following ciphers: {user_access[users[auth.current_user()]["access"]]["available_resources"]}')
+     
+    if users[auth.current_user()]['access'] in user_access:
+        return jsonify(f'You have access to the following ciphers: {user_access[users[auth.current_user()]["access"]]}')
        
-        else:
+    else:
             
-            return jsonify({'You have access to the following ciphers': None})
+        return jsonify({'Unauthorized access'})
         
 
 def get_class(cipher_name):
@@ -176,8 +174,8 @@ def get_class(cipher_name):
 
 @app.route('/ciphers/<cipher>', methods=['POST'])
 @auth.login_required
-def do_caesar(cipher):
-    if cipher in user_access[users[auth.current_user()]['access']]["available_resources"]:
+def do_cipher(cipher):
+    if cipher in user_access[users[auth.current_user()]['access']]:
         
         choice = request.json
         
