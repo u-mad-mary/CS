@@ -6,7 +6,7 @@ from ciphers.symmetric.stream.OTP import OTP
 from ciphers.symmetric.block.SM4 import SM4
 from ciphers.asymmetric.RSA import RSA
 from hash.Hash import Hash
-from hash.Storage import Storage
+from hash.PassStore import PassStore
 
 
 cipherCaesar = Caesar()
@@ -17,7 +17,7 @@ cipherOTP = OTP()
 cipherSM4 = SM4()
 cipherRSA = RSA()
 hash = Hash()
-storePass = Storage()
+storePass = PassStore()
 
 def encr_decr(em, dm):
     print('Encrypted text: ', str(em))
